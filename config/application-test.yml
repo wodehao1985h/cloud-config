@@ -1,0 +1,106 @@
+# 参考 http://www.tuicool.com/articles/veUjQba
+# Web容器配置
+server:
+  port: 8081
+  undertow:
+    accesslog:
+      # 开启Undertow访问日志
+      enabled: true
+      dir: /data/logs
+
+
+eureka:
+  #EurekaInstanceConfigBean
+  instance:
+    preferIpAddress: true
+    instanceId: ${spring.cloud.client.hostname}:${server.port}
+#    instanceId: ${vcap.application.instance_id:${spring.application.name}:${spring.application.instance_id:${server.port}}}
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    healthcheck:
+      enabled: false
+    serviceUrl:
+      defaultZone: http://10.10.27.113:8761/eureka/,http://10.10.27.114:8761/eureka/
+
+hystrix:
+  command:
+    # Globally config
+    default:
+      execution:
+        # Disable Hystrix timeout globally (for all services)
+        timeout.enabled: false
+        # Set Hystrix timeout to 60s globally
+        #isolation.thread.timeoutInMilliseconds: 60000
+
+    # Per service config
+    #<yourServiceName>:
+      #execution:
+        # Disable Hystrix timeout (per service)
+        #timeout.enabled: false
+        # Set Hystrix timeout to 60s (per service)
+        #isolation.thread.timeoutInMilliseconds: 60000
+  threadpool:
+    default:
+      coreSize: 2000
+      maxQueueSize: 100
+      queueSizeRejectionThreshold: 20
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://10.10.20.46:3306/jyall_cloud_3?useUnicode=true&characterEncoding=UTF-8
+    username: jyall
+    password: jyall2015
+  rabbitmq:
+    host: 10.10.27.42
+    port: 5672
+    username: admin
+    password: admin
+  redis:
+    timeout: 10000
+    host: 10.10.20.112
+  mail:
+    host: 10.10.10.61
+    port: 25
+    username: customer_service
+    password: jyALL1234
+send:
+  from:
+    email: customer_service@jyall.com
+
+mybatis:
+  config: classpath:mybatis-config.xml
+  # 批量插入或更新时，每次事务执行的插入或更新数据行数
+  rows_per_transaction: 500
+
+# Log 配置 级别大写 TRACE|DEBUG|INFO|WARN|ERROR
+logging:
+  level:
+    #root: INFO
+    com.jyall: INFO
+
+config:
+  bridgeOut: internet01
+  bridgeIn: intranet01
+  vhdPath: /docker-data/logs/jyall_cloud/vhd
+  imgname: .vhd
+  mkfs: ext4
+  volumePath: /yunyu
+  volumeName: /mnt/volume
+  userLocation: /data
+  blockdata: /blockdata
+  zookeeper: 10.10.27.1:2181,10.10.27.1:2182,10.10.27.1:2183
+  openvpnConnIp: 10.0.1.0
+  defaultDNS: 10.10.10.10
+  webconsoleNetIP: 250
+  webHostName: http://10.10.27.51/
+  gateway:
+    cpu: 1
+    storageSize: 10
+    memory: 1
+    imageType: 0
+    containerLabel: gateway
+    dns: 10.10.10.10
+    registryImageId: 68
+    capAdd: NET_ADMIN
